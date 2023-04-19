@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grafic cu tabel de scriere</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+</head>
+<body>
+    <h1>Introducere date</h1>
+    <form id="dataForm">
+        <label for="xVal">x:</label>
+        <input type="number" id="xVal" name="xVal">
+        <label for="y1Val">Y1:</label>
+        <input type="number" id="y1Val" name="y1Val">
+        <label for="y2Val">Y2:</label>
+        <input type="number" id="y2Val" name="y2Val">
+        <label for="y3Val">Y3:</label>
+        <input type="number" id="y3Val" name="y3Val">
+        <button type="button" onclick="addData()">Adăugare rând</button>
+        <button type="button" onclick="clearData()">Ștergere date</button>
+    </form>
+
+    <canvas id="chartCanvas"></canvas>
+
+    <script>
+        // Datele pentru grafic
+        const x = [];
+        const y1 = [];
+        const y2 = [];
+        const y3 = [];
+
+        // Crearea tabelului de scriere
+        const colLabels = ['x', 'Y1', 'Y2', 'Y3'];
+        const tableHtml = `
+            <table id="dataTable">
+                <tr>
+                    <th>${colLabels[0]}</th>
+                    <th>${colLabels[1]}</th>
+                    <th>${colLabels[2]}</th>
+                    <th>${colLabels[3]}</th>
+                </tr>
+            </table>
+        `;
+
+        document.body.innerHTML += tableHtml;
+
+        // Crearea graficului utilizând Chart.js
+        const ctx = document.getElementById('chartCanvas').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: x,
+                datasets: [
+                    {
+                        label: colLabels[1],
+                        data: y1,
+                        borderColor: 'blue',
+                    },
+                    {
+                        label: colLabels[2],
+                        data: y2,
+                        borderColor: 'red',
+                    },
+                    {
+                        label: colLabels[3],
+                        data: y3,
+                        borderColor: 'green',
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                    },
+                },
+            },
+        });
+
+        function addData() {
+            const xVal = parseFloat(document.getElementById('xVal').value);
+            const y1Val = parseFloat(document.getElementById('y1Val').value);
+            const y2Val = parseFloat(document.getElementById('y2Val').value);
+            const y3Val = parseFloat(document.getElementById('y3Val').value);
+              // Verificarea dacă valorile introduse sunt valide
+        if (isNaN(xVal) || isNaN(y1Val) || isNaN(y2Val) || isNaN(y3Val)) {
+            alert('Vă rugăm să introduceți valori numerice valide.');
+            return;
+        }
+
+        // Adăugarea valorilor în tabel și actualizarea graficului
+        const table = document.getElementById('dataTable');
+        const newRow = table.insertRow(-1);
+        const cell1 = newRow.insertCell(0);
+        const cell2 = newRow.insertCell(1);
+        const cell3 = newRow.insertCell(2);
+        const cell4 = newRow.insertCell(3);
+        cell1.textContent = xVal;
+        cell2.textContent = y1Val;
+        cell3.textContent = y2Val;
+        cell4.textContent = y3Val;
+        x.push(xVal);
+        y1.push(y1Val);
+        y2.push(y2Val);
+        y3.push(y3Val);
+        chart.update(); // Actualizare grafic
+
+        // Resetarea valorilor din formular
+        document.getElementById('xVal').value = '';
+        document.getElementById('y1Val').value = '';
+        document.getElementById('y2Val').value = '';
+        document.getElementById('y3Val').value = '';
+    }
+
+    function clearData() {
+        // Ștergerea datelor din tabel și actualizarea graficului
+        const table = document.getElementById('dataTable');
+        const rows = table.rows.length;
+        for (let i = rows - 1; i > 0; i--) {
+            table.deleteRow(i);
+        }
+        x.length = 0;
+        y1.length = 0;
+        y2.length = 0;
+        y3.length = 0;
+        chart.update(); // Actualizare grafic
+    }
+</script>
+</body>
+</html>

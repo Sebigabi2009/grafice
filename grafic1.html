@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grafic cu tabel de scriere</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+</head>
+<body>
+    <h1>Introducere date</h1>
+    <form id="dataForm">
+        <label for="xInput">x:</label>
+        <input type="number" step="0.1" id="xInput">
+        <label for="y1Input">y1:</label>
+        <input type="number" id="y1Input">
+        <label for="y2Input">y2:</label>
+        <input type="number" id="y2Input">
+        <label for="y3Input">y3:</label>
+        <input type="number" id="y3Input">
+        <button type="button" onclick="addRow()">Adăugare rând</button>
+    </form>
+
+    <canvas id="chartCanvas"></canvas>
+
+    <table id="dataTable">
+        <tr>
+            <th>x</th>
+            <th>y1</th>
+            <th>y2</th>
+            <th>y3</th>
+        </tr>
+    </table>
+
+    <script>
+        // Datele pentru grafic
+        const x = Array.from({length:0.1 }, (_, i) => i * 0.1);
+        const y1 = x.map(val => Math.sin(val));
+        const y2 = x.map(val => Math.cos(val));
+        const y3 = x.map(val => Math.tan(val));
+
+        // Crearea graficului utilizând Chart.js
+        const ctx = document.getElementById('chartCanvas').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: x,
+                datasets: [
+                    {
+                        label: 'y1',
+                        data: y1,
+                        borderColor: 'blue',
+                    },
+                    {
+                        label: 'y2',
+                        data: y2,
+                        borderColor: 'red',
+                    },
+                    {
+                        label: 'y3',
+                        data: y3,
+                        borderColor: 'green',
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                    },
+                },
+            },
+        });
+
+        // Adăugarea datelor în tabel la submit-ul form-ului
+        function addRow() {
+            const xInput = document.getElementById('xInput');
+            const y1Input = document.getElementById('y1Input');
+            const y2Input = document.getElementById('y2Input');
+            const y3Input = document.getElementById('y3Input');
+
+            const xVal = xInput.value;
+            const y1Val = y1Input.value;
+            const y2Val = y2Input.value;
+            const y3Val = y3Input.value;
+
+            const dataTable = document.getElementById('dataTable');
+            const newRow = dataTable.insertRow();
+            newRow.innerHTML = `
+                <td>${xVal}</td>
+                <td>${y1Val}</td>
+                <td>${y2Val}</td>
+                <td>${y3Val}</td>
+            `;
+
+            xInput.value = '';
+            y1Input.value = '';
+            y2Input.value = '';
+            y3Input.value = '';
+
+            // Actualizarea graficului
+chart.data.labels.push(xVal);
+chart.data.datasets[0].data.push(y1Val);
+chart.data.datasets[1].data.push(y2Val);
+chart.data.datasets[2].data.push(y3Val);
+chart.update();
+}
+</script>
+
+</body>
+</html>
